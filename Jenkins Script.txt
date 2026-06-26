@@ -1,0 +1,38 @@
+1. Jenkins class notes : https://devops-cicd.hashnode.dev/from-code-to-deployment-the-power-of-jenkins-in-cicd
+
+Jenkins Installation
+
+#!/bin/bash
+
+sudo apt update -y
+sudo apt upgrade -y
+
+# Java 21
+sudo apt install -y openjdk-21-jdk wget
+
+java -version
+
+# Download latest Jenkins package
+wget https://get.jenkins.io/debian-stable/jenkins_2.555.3_all.deb
+
+# Install Jenkins
+sudo dpkg -i jenkins_2.555.3_all.deb
+
+# Fix dependencies
+sudo apt --fix-broken install -y
+
+# Create swap for t3.micro
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+
+# Start Jenkins
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
+# Show status
+sudo systemctl status jenkins
+
+# Show admin password
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
