@@ -1,41 +1,26 @@
-#!/bin/bash
-
-# Update packages
 sudo apt update -y
 
-# Install Java 21
 sudo apt install -y openjdk-21-jdk wget
 
-# Verify Java installation
-java -version
-
-# Set JAVA_HOME
-JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-echo "export JAVA_HOME=$JAVA_HOME" | sudo tee -a /etc/profile
-echo "export PATH=\$JAVA_HOME/bin:\$PATH" | sudo tee -a /etc/profile
-
-export JAVA_HOME=$JAVA_HOME
-export PATH=$JAVA_HOME/bin:$PATH
-
-# Download Tomcat
 wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.119/bin/apache-tomcat-9.0.119.tar.gz
 
-# Extract
 tar -xzf apache-tomcat-9.0.119.tar.gz
 
-# Configure Tomcat users
-sed -i '/<\/tomcat-users>/i\
-<role rolename="manager-gui"/>\
-<role rolename="manager-script"/>\
-<user username="tomcat" password="admin@123" roles="manager-gui,manager-script"/>\
-' apache-tomcat-9.0.119/conf/tomcat-users.xml
+cat > apache-tomcat-9.0.119/conf/tomcat-users.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+    <role rolename="manager-gui"/>
+    <role rolename="manager-script"/>
+    <user username="tomcat" password="admin@123" roles="manager-gui,manager-script"/>
+</tomcat-users>
+EOF
 
-# Remove localhost restriction
-sed -i '/RemoteAddrValve/d' apache-tomcat-9.0.119/webapps/manager/META-INF/context.xml
+cat > apache-tomcat-9.0.119/webapps/manager/META-INF/context.xml <<EOF
+<Context antiResourceLocking="false" privileged="true">
+</Context>
+EOF
 
-# Start Tomcat
 sh apache-tomcat-9.0.119/bin/startup.sh
-
-# Show status
-sleep 5
-ps -ef | grep tomcat
