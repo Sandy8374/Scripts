@@ -1,6 +1,4 @@
-1. Jenkins class notes : https://devops-cicd.hashnode.dev/from-code-to-deployment-the-power-of-jenkins-in-cicd
 
-Jenkins Installation
 
 #!/bin/bash
 
