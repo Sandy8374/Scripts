@@ -27,4 +27,3 @@ terraform version
 
 
 
-Your setup will then look like
